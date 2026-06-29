@@ -759,17 +759,23 @@
     const city = document.getElementById('m-city').value;
     const date = document.getElementById('m-date').value;
     const size = document.getElementById('m-size').value;
-    if (!date) return;
+    if (!date) { alert('נא לבחור תאריך'); return; }
     btn.disabled = true; btn.textContent = 'יוצר...';
-    const res = await fetch('/api/events', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ city, date, size: parseInt(size) })
-    });
-    const data = await res.json();
-    btn.disabled = false; btn.textContent = 'צור אירוע';
-    closeTogetherModal();
-    window.location.href = `/event/${data.id}`;
+    try {
+      const res = await fetch('/api/events', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ city, date, size: parseInt(size) })
+      });
+      const data = await res.json();
+      if (data.error) { alert('שגיאה: ' + data.error); return; }
+      closeTogetherModal();
+      window.location.href = `/event/${data.id}`;
+    } catch(e) {
+      alert('שגיאת חיבור: ' + e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'צור אירוע';
+    }
   }
 
   async function doSearch() {
