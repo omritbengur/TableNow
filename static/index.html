@@ -14,105 +14,286 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('consent', 'default', {
-      analytics_storage: 'denied'
-    });
+    gtag('consent', 'default', { analytics_storage: 'denied' });
   </script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Rubik', -apple-system, 'Segoe UI', Arial, sans-serif; background: #fff; color: #2d2d2d; min-height: 100vh; }
+    body { font-family: 'Rubik', -apple-system, 'Segoe UI', Arial, sans-serif; background: #f7f7f7; color: #2d2d2d; min-height: 100vh; }
 
-    .header { background:#fff; border-bottom:1px solid #e8e8e8; padding:0 20px; height:56px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:200; box-shadow:0 1px 6px rgba(0,0,0,0.08); }
-    .logo { font-size:22px; font-weight:800; color:#da3743; letter-spacing:-0.5px; }
-    .logo span { color:#2d2d2d; }
-    .lang-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #da3743; background:#fff; color:#da3743; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.15s; }
-    .lang-btn:hover { background:#da3743; color:#fff; }
+    /* HEADER */
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    }
+    .logo { font-size: 22px; font-weight: 800; color: #da3743; letter-spacing: -0.5px; }
+    .logo span { color: #2d2d2d; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .lang-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1.5px solid #da3743;
+      background: #fff;
+      color: #da3743;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lang-btn:hover { background: #da3743; color: #fff; }
 
-    .hero { background:linear-gradient(135deg,#1a0a0b 0%,#3d0f14 60%,#da3743 100%); padding:36px 20px 40px; text-align:center; color:#fff; }
-    .hero h2 { font-size:26px; font-weight:700; margin-bottom:6px; line-height:1.25; }
-    .hero p { font-size:14px; color:rgba(255,255,255,0.75); margin-bottom:24px; }
+    /* LAYOUT */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 64px);
+      align-items: flex-start;
+    }
 
-    .search-card { background:#fff; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:10px; box-shadow:0 4px 20px rgba(0,0,0,0.18); }
-    .search-row { display:flex; gap:8px; }
-    .search-field { flex:1; display:flex; flex-direction:column; gap:3px; }
-    .search-field label { font-size:11px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.5px; }
-    .search-field select, .search-field input { border:none; outline:none; font-size:15px; font-weight:500; color:#2d2d2d; background:transparent; -webkit-appearance:none; width:100%; padding:0; }
-    .field-box { border:1.5px solid #e0e0e0; border-radius:10px; padding:10px 14px; background:#fafafa; transition:border-color 0.15s; }
-    .field-box:focus-within { border-color:#da3743; background:#fff; }
-    .search-btn { width:100%; padding:14px; background:#da3743; color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; transition:background 0.15s; }
-    .search-btn:hover { background:#c22f3a; }
-    .search-btn:disabled { background:#e8a0a4; cursor:default; }
+    /* SIDEBAR */
+    .sidebar {
+      width: 340px;
+      flex-shrink: 0;
+      background: #fff;
+      border-left: 1px solid #e8e8e8;
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sidebar-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1a1a;
+      line-height: 1.3;
+    }
+    .sidebar-sub {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
 
-    .filters-section { padding:14px 20px 0; background:#fff; border-bottom:1px solid #f0f0f0; }
-    .filters-label { font-size:12px; color:#888; font-weight:600; margin-bottom:8px; }
-    .chips-scroll, .rating-strip { display:flex; gap:8px; overflow-x:auto; padding-bottom:14px; scrollbar-width:none; }
-    .chips-scroll::-webkit-scrollbar, .rating-strip::-webkit-scrollbar { display:none; }
-    .chip { padding:7px 16px; border-radius:20px; border:1.5px solid #ddd; background:#fff; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; color:#444; transition:all 0.15s; flex-shrink:0; }
-    .chip.active { background:#da3743; color:#fff; border-color:#da3743; }
+    /* SEARCH FORM */
+    .search-field { display: flex; flex-direction: column; gap: 5px; }
+    .search-field label { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.6px; }
+    .field-box {
+      border: 1.5px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 11px 14px;
+      background: #fafafa;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .field-box:focus-within { border-color: #da3743; background: #fff; }
+    .field-box select, .field-box input {
+      border: none;
+      outline: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: #2d2d2d;
+      background: transparent;
+      -webkit-appearance: none;
+      width: 100%;
+      font-family: inherit;
+    }
+    .search-row { display: flex; gap: 10px; }
+    .search-row .search-field { flex: 1; }
 
-    .results-section { padding:20px 16px; background:#f7f7f7; min-height:200px; }
-    .results-header { font-size:14px; color:#666; margin-bottom:16px; font-weight:500; }
-    .cards-grid { display:flex; flex-direction:column; gap:16px; }
-    .status { text-align:center; padding:50px 20px; color:#999; font-size:15px; }
+    .search-btn {
+      width: 100%;
+      padding: 14px;
+      background: #da3743;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+    .search-btn:hover { background: #c22f3a; }
+    .search-btn:disabled { background: #e8a0a4; cursor: default; }
 
-    .card { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.15s,box-shadow 0.15s; }
-    .card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.12); }
-    .card-media { position:relative; height:210px; overflow:hidden; background:#eee; }
-    .card-media img, .card-media video { width:100%; height:100%; object-fit:cover; display:block; }
-    .card-media-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#f0e0e0,#e0c0c0); display:flex; align-items:center; justify-content:center; font-size:50px; }
-    .gallery-strip { display:flex; overflow-x:auto; gap:4px; padding:8px 14px 0; scrollbar-width:none; }
-    .gallery-strip::-webkit-scrollbar { display:none; }
-    .gallery-strip img { height:70px; width:105px; flex-shrink:0; object-fit:cover; border-radius:6px; cursor:pointer; opacity:0.85; transition:opacity 0.1s; }
-    .gallery-strip img:hover { opacity:1; }
-    .card-body { padding:14px 16px 16px; }
-    .card-name { font-size:18px; font-weight:700; color:#1a1a1a; margin-bottom:3px; }
-    .card-meta { font-size:13px; color:#888; margin-bottom:12px; }
-    .times { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
-    .time-chip { padding:7px 14px; background:#fff5f5; color:#da3743; border:1.5px solid #f5c0c3; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.12s; text-decoration:none; display:inline-block; }
-    .time-chip:hover { background:#da3743; color:#fff; border-color:#da3743; }
-    .no-times { font-size:12px; color:#bbb; margin-bottom:14px; }
-    .btn-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-    .book-btn { flex:1; min-width:90px; padding:11px 12px; background:#da3743; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; text-align:center; text-decoration:none; cursor:pointer; transition:background 0.12s; }
-    .book-btn:hover { background:#c22f3a; }
-    .btn-outline { background:#fff; color:#2d2d2d; border:1.5px solid #ddd; }
-    .btn-outline:hover { border-color:#999; background:#f5f5f5; }
-    .btn-insta { background:#e1306c; }
-    .btn-insta:hover { background:#c72760; }
-    .menu-toggle { width:100%; padding:10px 14px; background:#f7f7f7; border:1.5px solid #eee; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; text-align:right; color:#444; margin-top:2px; transition:background 0.1s; }
-    .menu-toggle:hover { background:#f0f0f0; }
-    .menu-body { display:none; margin-top:10px; }
-    .menu-body.open { display:block; }
-    .menu-section-title { font-size:12px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.5px; margin:12px 0 6px; }
-    .menu-item { display:flex; justify-content:space-between; align-items:baseline; padding:6px 0; border-bottom:1px solid #f5f5f5; }
-    .menu-item-name { font-size:14px; color:#2d2d2d; flex:1; }
-    .menu-item-desc { font-size:12px; color:#bbb; }
-    .menu-item-price { font-size:14px; font-weight:700; color:#da3743; margin-right:10px; white-space:nowrap; }
+    /* FILTERS IN SIDEBAR */
+    .divider { border: none; border-top: 1px solid #f0f0f0; }
+    .filter-label { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+    .chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #ddd;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      color: #444;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .chip.active { background: #da3743; color: #fff; border-color: #da3743; }
 
-    .pagination { display:flex; justify-content:center; align-items:center; gap:6px; padding:24px 0 8px; }
-    .page-btn { width:38px; height:38px; border-radius:50%; border:1.5px solid #ddd; background:#fff; font-size:14px; font-weight:600; cursor:pointer; color:#444; transition:all 0.12s; }
-    .page-btn.active { background:#da3743; color:#fff; border-color:#da3743; }
-    .page-btn:hover:not(.active):not(:disabled) { border-color:#da3743; color:#da3743; }
-    .page-btn:disabled { opacity:0.3; cursor:default; }
-    .page-arrow { font-size:18px; }
-    .page-info { font-size:13px; color:#999; text-align:center; padding-bottom:16px; }
-    .error-msg { background:#fff5f5; border:1.5px solid #f5c0c3; border-radius:10px; padding:14px 16px; color:#c22f3a; font-size:14px; }
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      padding: 28px 24px;
+      min-width: 0;
+    }
+    .results-header {
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .status { text-align: center; padding: 80px 20px; color: #999; font-size: 15px; }
+
+    /* CARD */
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .card-media { position: relative; height: 200px; overflow: hidden; background: #eee; }
+    .card-media img, .card-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card-media-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg,#f0e0e0,#e0c0c0); display: flex; align-items: center; justify-content: center; font-size: 50px; }
+    .gallery-strip { display: flex; overflow-x: auto; gap: 4px; padding: 8px 12px 0; scrollbar-width: none; }
+    .gallery-strip::-webkit-scrollbar { display: none; }
+    .gallery-strip img { height: 60px; width: 90px; flex-shrink: 0; object-fit: cover; border-radius: 6px; cursor: pointer; opacity: 0.85; transition: opacity 0.1s; }
+    .gallery-strip img:hover { opacity: 1; }
+    .card-body { padding: 14px 16px 16px; }
+    .card-name { font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 3px; }
+    .card-meta { font-size: 13px; color: #888; margin-bottom: 12px; }
+    .times { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .time-chip {
+      padding: 6px 12px;
+      background: #fff5f5;
+      color: #da3743;
+      border: 1.5px solid #f5c0c3;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s;
+      text-decoration: none;
+      display: inline-block;
+      font-family: inherit;
+    }
+    .time-chip:hover { background: #da3743; color: #fff; border-color: #da3743; }
+    .no-times { font-size: 12px; color: #bbb; margin-bottom: 14px; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .book-btn {
+      flex: 1;
+      min-width: 80px;
+      padding: 10px 12px;
+      background: #da3743;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.12s;
+      font-family: inherit;
+    }
+    .book-btn:hover { background: #c22f3a; }
+    .btn-outline { background: #fff; color: #2d2d2d; border: 1.5px solid #ddd; }
+    .btn-outline:hover { border-color: #999; background: #f5f5f5; }
+    .btn-insta { background: #e1306c; }
+    .btn-insta:hover { background: #c72760; }
+    .menu-toggle {
+      width: 100%;
+      padding: 9px 14px;
+      background: #f7f7f7;
+      border: 1.5px solid #eee;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: right;
+      color: #444;
+      margin-top: 2px;
+      transition: background 0.1s;
+      font-family: inherit;
+    }
+    .menu-toggle:hover { background: #f0f0f0; }
+    .menu-body { display: none; margin-top: 10px; }
+    .menu-body.open { display: block; }
+    .menu-section-title { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 6px; }
+    .menu-item { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px solid #f5f5f5; }
+    .menu-item-name { font-size: 13px; color: #2d2d2d; flex: 1; }
+    .menu-item-desc { font-size: 11px; color: #bbb; }
+    .menu-item-price { font-size: 13px; font-weight: 700; color: #da3743; margin-right: 10px; white-space: nowrap; }
+
+    /* PAGINATION */
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 32px 0 8px; }
+    .page-btn { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid #ddd; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; color: #444; transition: all 0.12s; font-family: inherit; }
+    .page-btn.active { background: #da3743; color: #fff; border-color: #da3743; }
+    .page-btn:hover:not(.active):not(:disabled) { border-color: #da3743; color: #da3743; }
+    .page-btn:disabled { opacity: 0.3; cursor: default; }
+    .page-arrow { font-size: 18px; }
+    .page-info { font-size: 13px; color: #999; text-align: center; padding-bottom: 16px; }
+    .error-msg { background: #fff5f5; border: 1.5px solid #f5c0c3; border-radius: 10px; padding: 14px 16px; color: #c22f3a; font-size: 14px; }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        position: static;
+        height: auto;
+        border-left: none;
+        border-bottom: 1px solid #e8e8e8;
+      }
+      .main { padding: 20px 16px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .header { padding: 0 16px; }
+    }
   </style>
 </head>
 <body>
 
 <div class="header">
   <div class="logo">מסעדה<span>עכשיו</span></div>
-<button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+  <div class="header-right">
+    <span id="poweredBy" style="font-size:12px;color:#bbb;">מופעל על ידי Ontopo</span>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+  </div>
 </div>
 
-<div class="hero">
-  <h2 data-i18n="heroTitle">מצאי שולחן פנוי הערב</h2>
-  <p data-i18n="heroSub">מקומות אמיתיים, זמינות בזמן אמת</p>
-  <div class="search-card">
-    <div class="search-row">
-      <div class="search-field field-box" style="flex:1.4">
-        <label data-i18n="city">עיר</label>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-title" data-i18n="heroTitle">מצאי שולחן פנוי הערב</div>
+      <div class="sidebar-sub" data-i18n="heroSub">מקומות אמיתיים, זמינות בזמן אמת</div>
+    </div>
+
+    <div class="search-field">
+      <label data-i18n="city">עיר</label>
+      <div class="field-box">
         <select id="city">
           <option value="תל אביב" data-i18n-opt="tlv">תל אביב</option>
           <option value="ירושלים" data-i18n-opt="jer">ירושלים</option>
@@ -126,8 +307,26 @@
           <option value="אילת" data-i18n-opt="elt">אילת</option>
         </select>
       </div>
-      <div class="search-field field-box" style="flex:1">
-        <label data-i18n="diners">סועדים</label>
+    </div>
+
+    <div class="search-row">
+      <div class="search-field">
+        <label data-i18n="date">תאריך</label>
+        <div class="field-box">
+          <input type="date" id="date" />
+        </div>
+      </div>
+      <div class="search-field">
+        <label data-i18n="time">שעה</label>
+        <div class="field-box">
+          <input type="time" id="time" dir="ltr" />
+        </div>
+      </div>
+    </div>
+
+    <div class="search-field">
+      <label data-i18n="diners">סועדים</label>
+      <div class="field-box">
         <select id="size" onchange="onSizeChange(this)">
           <option value="1">1</option>
           <option value="2" selected>2</option>
@@ -143,40 +342,40 @@
         </select>
       </div>
     </div>
-    <div class="search-row">
-      <div class="search-field field-box" style="flex:1">
-        <label data-i18n="date">תאריך</label>
-        <input type="date" id="date" />
-      </div>
-      <div class="search-field field-box" style="flex:1">
-        <label data-i18n="time">שעה</label>
-        <input type="time" id="time" dir="ltr" />
+
+    <hr class="divider" />
+
+    <div>
+      <div class="filter-label" data-i18n="venueType">סוג מקום</div>
+      <div class="chips-wrap">
+        <div class="chip cat-btn active" data-val="" onclick="setCategory(this)" data-i18n="all">הכל</div>
+        <div class="chip cat-btn" data-val="wine_bar" onclick="setCategory(this)" data-i18n="wineBar">בר יין</div>
+        <div class="chip cat-btn" data-val="fine_dining" onclick="setCategory(this)" data-i18n="fineDining">מסעדת שף</div>
+        <div class="chip cat-btn" data-val="kosher" onclick="setCategory(this)" data-i18n="kosher">כשר</div>
+        <div class="chip cat-btn" id="privateBtn" data-val="private_room" onclick="setCategory(this)" style="display:none" data-i18n="privateRoom">חדר פרטי</div>
       </div>
     </div>
+
+    <div>
+      <div class="filter-label" data-i18n="minRating">דירוג מינימלי</div>
+      <div class="chips-wrap">
+        <div class="chip rating-btn active" data-val="0" onclick="setRating(this)" data-i18n="allRatings">כל הדירוגים</div>
+        <div class="chip rating-btn" data-val="3" onclick="setRating(this)">★ 3+</div>
+        <div class="chip rating-btn" data-val="4" onclick="setRating(this)">★ 4+</div>
+        <div class="chip rating-btn" data-val="4.5" onclick="setRating(this)">★ 4.5+</div>
+      </div>
+    </div>
+
     <button class="search-btn" id="searchBtn" onclick="doSearch()" data-i18n="searchBtn">חפשי שולחן</button>
   </div>
-</div>
 
-<div class="filters-section">
-  <div class="filters-label" data-i18n="venueType">סוג מקום</div>
-  <div class="chips-scroll">
-    <div class="chip cat-btn active" data-val="" onclick="setCategory(this)" data-i18n="all">הכל</div>
-    <div class="chip cat-btn" data-val="wine_bar" onclick="setCategory(this)" data-i18n="wineBar">בר יין</div>
-    <div class="chip cat-btn" data-val="fine_dining" onclick="setCategory(this)" data-i18n="fineDining">מסעדת שף</div>
-    <div class="chip cat-btn" data-val="kosher" onclick="setCategory(this)" data-i18n="kosher">כשר</div>
-    <div class="chip cat-btn" id="privateBtn" data-val="private_room" onclick="setCategory(this)" style="display:none" data-i18n="privateRoom">חדר פרטי</div>
+  <!-- MAIN RESULTS -->
+  <div class="main">
+    <div id="resultsSection">
+      <div class="status" data-i18n="placeholder">מלאי את הפרטים ולחצי חפשי שולחן</div>
+    </div>
   </div>
-  <div class="filters-label" data-i18n="minRating">דירוג מינימלי</div>
-  <div class="rating-strip">
-    <div class="chip rating-btn active" data-val="0" onclick="setRating(this)" data-i18n="allRatings">כל הדירוגים</div>
-    <div class="chip rating-btn" data-val="3" onclick="setRating(this)">★ 3+</div>
-    <div class="chip rating-btn" data-val="4" onclick="setRating(this)">★ 4+</div>
-    <div class="chip rating-btn" data-val="4.5" onclick="setRating(this)">★ 4.5+</div>
-  </div>
-</div>
 
-<div class="results-section" id="resultsSection">
-  <div class="status" data-i18n="placeholder">מלאי את הפרטים ולחצי חפשי שולחן</div>
 </div>
 
 <script>
@@ -236,26 +435,22 @@
     document.getElementById('langBtn').textContent = lang === 'he' ? 'EN' : 'עב';
     document.getElementById('poweredBy').textContent = t('poweredBy');
 
-    // Update all data-i18n elements
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
-      if (el.tagName === 'BUTTON' || el.tagName === 'DIV' || el.tagName === 'H2' || el.tagName === 'P' || el.tagName === 'LABEL') {
+      if (el.tagName === 'BUTTON' || el.tagName === 'DIV' || el.tagName === 'H2' || el.tagName === 'P' || el.tagName === 'LABEL' || el.tagName === 'SPAN') {
         el.textContent = t(key);
       }
     });
 
-    // Update city options
     document.querySelectorAll('#city option[data-i18n-opt]').forEach(opt => {
       opt.textContent = T[lang].cities[opt.dataset.i18nOpt] || opt.textContent;
     });
 
-    // Update menu-toggle buttons text
     document.querySelectorAll('.menu-toggle').forEach(btn => {
       const isOpen = btn.nextElementSibling.classList.contains('open');
       btn.textContent = isOpen ? t('menuOpen') : t('menu');
     });
 
-    // Re-render results if any
     if (allRestaurants.length) renderPage(currentPage);
     else {
       const placeholder = document.querySelector('#resultsSection .status');
@@ -263,7 +458,6 @@
     }
   }
 
-  // Init dates
   const now = new Date();
   const pad = n => String(n).padStart(2, '0');
   document.getElementById('date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
@@ -311,7 +505,7 @@
       const allImgs = [r.image, ...(r.gallery || [])].filter(Boolean);
 
       const mediaHtml = r.video
-        ? `<video src="${r.video}" autoplay muted loop playsinline style="width:100%;height:210px;object-fit:cover;display:block;"></video>`
+        ? `<video src="${r.video}" autoplay muted loop playsinline style="width:100%;height:200px;object-fit:cover;display:block;"></video>`
         : allImgs.length
           ? `<div class="card-media"><img src="${allImgs[0]}" alt="${r.name||''}" loading="lazy"/></div>`
           : `<div class="card-media"><div class="card-media-placeholder">🍽</div></div>`;
@@ -372,8 +566,6 @@
     document.getElementById('resultsSection').innerHTML =
       `<div class="results-header">${t('found')(allRestaurants.length)}</div>
        <div class="cards-grid">${cardsHtml}</div>${paginationHtml}`;
-
-    window.scrollTo({ top: document.querySelector('.filters-section').offsetTop, behavior: 'smooth' });
   }
 
   async function doSearch() {
@@ -408,11 +600,11 @@
 </script>
 
 <!-- Consent Banner -->
-<div id="consent-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1a1a1a; color:#fff; padding:16px 20px; z-index:9999; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:14px;">
-  <span id="consent-text">אנו משתמשים בעוגיות לניתוח תנועה באתר. האם תאשרי?</span>
+<div id="consent-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1a1a1a; color:#fff; padding:16px 20px; z-index:9999; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:14px;">
+  <span>אנו משתמשים בעוגיות לניתוח תנועה באתר. האם תאשרי?</span>
   <div style="display:flex; gap:10px; flex-shrink:0;">
     <button onclick="setConsent(true)" style="background:#da3743; color:#fff; border:none; padding:8px 18px; border-radius:20px; font-size:13px; font-weight:700; cursor:pointer;">אישור</button>
-    <button onclick="setConsent(false)" style="background:transparent; color:#aaa; border:1px solid #555; padding:8px 18px; border-radius:20px; font-size:13px; cursor:pointer;">דחייה</button>
+    <button onclick="setConsent(false)" style="background:transparent; color:#aaa; border:1px solid #555; padding:8px 18px; border-radius:20px; font-size:13px; cursor:pointer; font-family:inherit;">דחייה</button>
   </div>
 </div>
 
