@@ -427,7 +427,7 @@
   function renderOverlap() {
     if (!eventData) return;
     const withTimes = eventData.participants.filter(p => p.times.length > 0);
-    const ready = withTimes.length >= eventData.size;
+    const ready = withTimes.length >= Math.max(1, Math.ceil(eventData.size / 2));
     if (!ready) {
       document.getElementById('overlapSection').style.display = 'none';
       return;
