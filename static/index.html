@@ -754,7 +754,7 @@
     document.getElementById('togetherModal').style.display = 'none';
   }
 
-  async function createEvent() {
+  async function submitNewEvent() {
     const btn = document.getElementById('createEventBtn');
     const city = document.getElementById('m-city').value;
     const date = document.getElementById('m-date').value;
@@ -833,7 +833,7 @@
     </div>
     <div class="modal-actions">
       <button class="modal-cancel-btn" onclick="closeTogetherModal()">ביטול</button>
-      <button class="modal-create-btn" id="createEventBtn" onclick="createEvent()">צור אירוע</button>
+      <button class="modal-create-btn" id="createEventBtn" onclick="submitNewEvent()">צור אירוע</button>
     </div>
   </div>
 </div>
