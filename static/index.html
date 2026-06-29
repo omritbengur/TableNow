@@ -401,7 +401,6 @@
       pageOf: (p, t) => `עמוד ${p} מתוך ${t}`,
       bookTable: 'הזמן שולחן', website: 'אתר', noTimes: 'לחצי על הזמן שולחן לבדיקת זמינות',
       menu: 'תפריט ▾', menuOpen: 'תפריט ▴',
-      poweredBy: 'מופעל על ידי Ontopo',
       cities: { tlv:'תל אביב', jer:'ירושלים', hfa:'חיפה', hrl:'הרצליה', rag:'רמת גן', ptk:'פתח תקווה', r1z:'ראשון לציון', ntn:'נתניה', bsh:'באר שבע', elt:'אילת' },
     },
     en: {
@@ -419,7 +418,6 @@
       pageOf: (p, t) => `Page ${p} of ${t}`,
       bookTable: 'Book a Table', website: 'Website', noTimes: 'Click Book a Table to check availability',
       menu: 'Menu ▾', menuOpen: 'Menu ▴',
-      poweredBy: 'Powered by Ontopo',
       cities: { tlv:'Tel Aviv', jer:'Jerusalem', hfa:'Haifa', hrl:'Herzliya', rag:'Ramat Gan', ptk:'Petah Tikva', r1z:'Rishon LeZion', ntn:'Netanya', bsh:'Beer Sheva', elt:'Eilat' },
     }
   };
@@ -432,7 +430,6 @@
     html.lang = lang;
     html.dir = lang === 'he' ? 'rtl' : 'ltr';
     document.getElementById('langBtn').textContent = lang === 'he' ? 'EN' : 'עב';
-    document.getElementById('poweredBy').textContent = t('poweredBy');
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
