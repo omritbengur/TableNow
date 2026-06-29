@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מסעדה עכשיו</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Rubik', -apple-system, 'Segoe UI', Arial, sans-serif; background: #fff; color: #2d2d2d; min-height: 100vh; }
+
+    .header { background:#fff; border-bottom:1px solid #e8e8e8; padding:0 20px; height:56px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:200; box-shadow:0 1px 6px rgba(0,0,0,0.08); }
+    .logo { font-size:22px; font-weight:800; color:#da3743; letter-spacing:-0.5px; }
+    .logo span { color:#2d2d2d; }
+    .lang-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #da3743; background:#fff; color:#da3743; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    .lang-btn:hover { background:#da3743; color:#fff; }
+
+    .hero { background:linear-gradient(135deg,#1a0a0b 0%,#3d0f14 60%,#da3743 100%); padding:36px 20px 40px; text-align:center; color:#fff; }
+    .hero h2 { font-size:26px; font-weight:700; margin-bottom:6px; line-height:1.25; }
+    .hero p { font-size:14px; color:rgba(255,255,255,0.75); margin-bottom:24px; }
+
+    .search-card { background:#fff; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:10px; box-shadow:0 4px 20px rgba(0,0,0,0.18); }
+    .search-row { display:flex; gap:8px; }
+    .search-field { flex:1; display:flex; flex-direction:column; gap:3px; }
+    .search-field label { font-size:11px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.5px; }
+    .search-field select, .search-field input { border:none; outline:none; font-size:15px; font-weight:500; color:#2d2d2d; background:transparent; -webkit-appearance:none; width:100%; padding:0; }
+    .field-box { border:1.5px solid #e0e0e0; border-radius:10px; padding:10px 14px; background:#fafafa; transition:border-color 0.15s; }
+    .field-box:focus-within { border-color:#da3743; background:#fff; }
+    .search-btn { width:100%; padding:14px; background:#da3743; color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; transition:background 0.15s; }
+    .search-btn:hover { background:#c22f3a; }
+    .search-btn:disabled { background:#e8a0a4; cursor:default; }
+
+    .filters-section { padding:14px 20px 0; background:#fff; border-bottom:1px solid #f0f0f0; }
+    .filters-label { font-size:12px; color:#888; font-weight:600; margin-bottom:8px; }
+    .chips-scroll, .rating-strip { display:flex; gap:8px; overflow-x:auto; padding-bottom:14px; scrollbar-width:none; }
+    .chips-scroll::-webkit-scrollbar, .rating-strip::-webkit-scrollbar { display:none; }
+    .chip { padding:7px 16px; border-radius:20px; border:1.5px solid #ddd; background:#fff; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; color:#444; transition:all 0.15s; flex-shrink:0; }
+    .chip.active { background:#da3743; color:#fff; border-color:#da3743; }
+
+    .results-section { padding:20px 16px; background:#f7f7f7; min-height:200px; }
+    .results-header { font-size:14px; color:#666; margin-bottom:16px; font-weight:500; }
+    .cards-grid { display:flex; flex-direction:column; gap:16px; }
+    .status { text-align:center; padding:50px 20px; color:#999; font-size:15px; }
+
+    .card { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.15s,box-shadow 0.15s; }
+    .card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.12); }
+    .card-media { position:relative; height:210px; overflow:hidden; background:#eee; }
+    .card-media img, .card-media video { width:100%; height:100%; object-fit:cover; display:block; }
+    .card-media-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#f0e0e0,#e0c0c0); display:flex; align-items:center; justify-content:center; font-size:50px; }
+    .gallery-strip { display:flex; overflow-x:auto; gap:4px; padding:8px 14px 0; scrollbar-width:none; }
+    .gallery-strip::-webkit-scrollbar { display:none; }
+    .gallery-strip img { height:70px; width:105px; flex-shrink:0; object-fit:cover; border-radius:6px; cursor:pointer; opacity:0.85; transition:opacity 0.1s; }
+    .gallery-strip img:hover { opacity:1; }
+    .card-body { padding:14px 16px 16px; }
+    .card-name { font-size:18px; font-weight:700; color:#1a1a1a; margin-bottom:3px; }
+    .card-meta { font-size:13px; color:#888; margin-bottom:12px; }
+    .times { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+    .time-chip { padding:7px 14px; background:#fff5f5; color:#da3743; border:1.5px solid #f5c0c3; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.12s; text-decoration:none; display:inline-block; }
+    .time-chip:hover { background:#da3743; color:#fff; border-color:#da3743; }
+    .no-times { font-size:12px; color:#bbb; margin-bottom:14px; }
+    .btn-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+    .book-btn { flex:1; min-width:90px; padding:11px 12px; background:#da3743; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; text-align:center; text-decoration:none; cursor:pointer; transition:background 0.12s; }
+    .book-btn:hover { background:#c22f3a; }
+    .btn-outline { background:#fff; color:#2d2d2d; border:1.5px solid #ddd; }
+    .btn-outline:hover { border-color:#999; background:#f5f5f5; }
+    .btn-insta { background:#e1306c; }
+    .btn-insta:hover { background:#c72760; }
+    .menu-toggle { width:100%; padding:10px 14px; background:#f7f7f7; border:1.5px solid #eee; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; text-align:right; color:#444; margin-top:2px; transition:background 0.1s; }
+    .menu-toggle:hover { background:#f0f0f0; }
+    .menu-body { display:none; margin-top:10px; }
+    .menu-body.open { display:block; }
+    .menu-section-title { font-size:12px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.5px; margin:12px 0 6px; }
+    .menu-item { display:flex; justify-content:space-between; align-items:baseline; padding:6px 0; border-bottom:1px solid #f5f5f5; }
+    .menu-item-name { font-size:14px; color:#2d2d2d; flex:1; }
+    .menu-item-desc { font-size:12px; color:#bbb; }
+    .menu-item-price { font-size:14px; font-weight:700; color:#da3743; margin-right:10px; white-space:nowrap; }
+
+    .pagination { display:flex; justify-content:center; align-items:center; gap:6px; padding:24px 0 8px; }
+    .page-btn { width:38px; height:38px; border-radius:50%; border:1.5px solid #ddd; background:#fff; font-size:14px; font-weight:600; cursor:pointer; color:#444; transition:all 0.12s; }
+    .page-btn.active { background:#da3743; color:#fff; border-color:#da3743; }
+    .page-btn:hover:not(.active):not(:disabled) { border-color:#da3743; color:#da3743; }
+    .page-btn:disabled { opacity:0.3; cursor:default; }
+    .page-arrow { font-size:18px; }
+    .page-info { font-size:13px; color:#999; text-align:center; padding-bottom:16px; }
+    .error-msg { background:#fff5f5; border:1.5px solid #f5c0c3; border-radius:10px; padding:14px 16px; color:#c22f3a; font-size:14px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">מסעדה<span>עכשיו</span></div>
+<button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+</div>
+
+<div class="hero">
+  <h2 data-i18n="heroTitle">מצאי שולחן פנוי הערב</h2>
+  <p data-i18n="heroSub">מקומות אמיתיים, זמינות בזמן אמת</p>
+  <div class="search-card">
+    <div class="search-row">
+      <div class="search-field field-box" style="flex:1.4">
+        <label data-i18n="city">עיר</label>
+        <select id="city">
+          <option value="תל אביב" data-i18n-opt="tlv">תל אביב</option>
+          <option value="ירושלים" data-i18n-opt="jer">ירושלים</option>
+          <option value="חיפה" data-i18n-opt="hfa">חיפה</option>
+          <option value="הרצליה" data-i18n-opt="hrl">הרצליה</option>
+          <option value="רמת גן" data-i18n-opt="rag">רמת גן</option>
+          <option value="פתח תקווה" data-i18n-opt="ptk">פתח תקווה</option>
+          <option value="ראשון לציון" data-i18n-opt="r1z">ראשון לציון</option>
+          <option value="נתניה" data-i18n-opt="ntn">נתניה</option>
+          <option value="באר שבע" data-i18n-opt="bsh">באר שבע</option>
+          <option value="אילת" data-i18n-opt="elt">אילת</option>
+        </select>
+      </div>
+      <div class="search-field field-box" style="flex:1">
+        <label data-i18n="diners">סועדים</label>
+        <select id="size" onchange="onSizeChange(this)">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="8">8</option>
+          <option value="10">10</option>
+          <option value="12">12+</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="search-field field-box" style="flex:1">
+        <label data-i18n="date">תאריך</label>
+        <input type="date" id="date" />
+      </div>
+      <div class="search-field field-box" style="flex:1">
+        <label data-i18n="time">שעה</label>
+        <input type="time" id="time" dir="ltr" />
+      </div>
+    </div>
+    <button class="search-btn" id="searchBtn" onclick="doSearch()" data-i18n="searchBtn">חפשי שולחן</button>
+  </div>
+</div>
+
+<div class="filters-section">
+  <div class="filters-label" data-i18n="venueType">סוג מקום</div>
+  <div class="chips-scroll">
+    <div class="chip cat-btn active" data-val="" onclick="setCategory(this)" data-i18n="all">הכל</div>
+    <div class="chip cat-btn" data-val="wine_bar" onclick="setCategory(this)" data-i18n="wineBar">בר יין</div>
+    <div class="chip cat-btn" data-val="fine_dining" onclick="setCategory(this)" data-i18n="fineDining">מסעדת שף</div>
+    <div class="chip cat-btn" data-val="kosher" onclick="setCategory(this)" data-i18n="kosher">כשר</div>
+    <div class="chip cat-btn" id="privateBtn" data-val="private_room" onclick="setCategory(this)" style="display:none" data-i18n="privateRoom">חדר פרטי</div>
+  </div>
+  <div class="filters-label" data-i18n="minRating">דירוג מינימלי</div>
+  <div class="rating-strip">
+    <div class="chip rating-btn active" data-val="0" onclick="setRating(this)" data-i18n="allRatings">כל הדירוגים</div>
+    <div class="chip rating-btn" data-val="3" onclick="setRating(this)">★ 3+</div>
+    <div class="chip rating-btn" data-val="4" onclick="setRating(this)">★ 4+</div>
+    <div class="chip rating-btn" data-val="4.5" onclick="setRating(this)">★ 4.5+</div>
+  </div>
+</div>
+
+<div class="results-section" id="resultsSection">
+  <div class="status" data-i18n="placeholder">מלאי את הפרטים ולחצי חפשי שולחן</div>
+</div>
+
+<script>
+  const PAGE_SIZE = 6;
+  let minRating = 0;
+  let venueType = '';
+  let allRestaurants = [];
+  let currentPage = 1;
+  let lang = 'he';
+
+  const T = {
+    he: {
+      heroTitle: 'מצאי שולחן פנוי הערב',
+      heroSub: 'מקומות אמיתיים, זמינות בזמן אמת',
+      city: 'עיר', diners: 'סועדים', date: 'תאריך', time: 'שעה',
+      searchBtn: 'חפשי שולחן',
+      venueType: 'סוג מקום', minRating: 'דירוג מינימלי',
+      all: 'הכל', wineBar: 'בר יין', fineDining: 'מסעדת שף',
+      kosher: 'כשר', privateRoom: 'חדר פרטי', allRatings: 'כל הדירוגים',
+      placeholder: 'מלאי את הפרטים ולחצי חפשי שולחן',
+      searching: 'מחפשת מסעדות פנויות...',
+      noResults: 'לא נמצאו מסעדות פנויות לשעה זו. נסי שעה אחרת.',
+      found: n => `${n} מסעדות פנויות`,
+      pageOf: (p, t) => `עמוד ${p} מתוך ${t}`,
+      bookTable: 'הזמן שולחן', website: 'אתר', noTimes: 'לחצי על הזמן שולחן לבדיקת זמינות',
+      menu: 'תפריט ▾', menuOpen: 'תפריט ▴',
+      poweredBy: 'מופעל על ידי Ontopo',
+      cities: { tlv:'תל אביב', jer:'ירושלים', hfa:'חיפה', hrl:'הרצליה', rag:'רמת גן', ptk:'פתח תקווה', r1z:'ראשון לציון', ntn:'נתניה', bsh:'באר שבע', elt:'אילת' },
+    },
+    en: {
+      heroTitle: 'Find an available table tonight',
+      heroSub: 'Real venues, real-time availability',
+      city: 'City', diners: 'Diners', date: 'Date', time: 'Time',
+      searchBtn: 'Find a Table',
+      venueType: 'Venue Type', minRating: 'Minimum Rating',
+      all: 'All', wineBar: 'Wine Bar', fineDining: 'Fine Dining',
+      kosher: 'Kosher', privateRoom: 'Private Room', allRatings: 'All Ratings',
+      placeholder: 'Fill in your details and search for a table',
+      searching: 'Searching for available restaurants...',
+      noResults: 'No available restaurants found. Try a different time.',
+      found: n => `${n} available restaurants`,
+      pageOf: (p, t) => `Page ${p} of ${t}`,
+      bookTable: 'Book a Table', website: 'Website', noTimes: 'Click Book a Table to check availability',
+      menu: 'Menu ▾', menuOpen: 'Menu ▴',
+      poweredBy: 'Powered by Ontopo',
+      cities: { tlv:'Tel Aviv', jer:'Jerusalem', hfa:'Haifa', hrl:'Herzliya', rag:'Ramat Gan', ptk:'Petah Tikva', r1z:'Rishon LeZion', ntn:'Netanya', bsh:'Beer Sheva', elt:'Eilat' },
+    }
+  };
+
+  function t(key) { return T[lang][key] || key; }
+
+  function toggleLang() {
+    lang = lang === 'he' ? 'en' : 'he';
+    const html = document.documentElement;
+    html.lang = lang;
+    html.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.getElementById('langBtn').textContent = lang === 'he' ? 'EN' : 'עב';
+    document.getElementById('poweredBy').textContent = t('poweredBy');
+
+    // Update all data-i18n elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (el.tagName === 'BUTTON' || el.tagName === 'DIV' || el.tagName === 'H2' || el.tagName === 'P' || el.tagName === 'LABEL') {
+        el.textContent = t(key);
+      }
+    });
+
+    // Update city options
+    document.querySelectorAll('#city option[data-i18n-opt]').forEach(opt => {
+      opt.textContent = T[lang].cities[opt.dataset.i18nOpt] || opt.textContent;
+    });
+
+    // Update menu-toggle buttons text
+    document.querySelectorAll('.menu-toggle').forEach(btn => {
+      const isOpen = btn.nextElementSibling.classList.contains('open');
+      btn.textContent = isOpen ? t('menuOpen') : t('menu');
+    });
+
+    // Re-render results if any
+    if (allRestaurants.length) renderPage(currentPage);
+    else {
+      const placeholder = document.querySelector('#resultsSection .status');
+      if (placeholder) placeholder.textContent = t('placeholder');
+    }
+  }
+
+  // Init dates
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  const mins = now.getMinutes() < 30 ? 30 : 0;
+  const hrs = now.getMinutes() < 30 ? now.getHours() : now.getHours() + 1;
+  document.getElementById('time').value = `${pad(hrs % 24)}:${pad(mins)}`;
+
+  function onSizeChange(sel) {
+    const pb = document.getElementById('privateBtn');
+    if (parseInt(sel.value) >= 12) { pb.style.display = ''; }
+    else { pb.style.display = 'none'; if (venueType === 'private_room') setCategory(document.querySelector('.cat-btn')); }
+  }
+
+  function setCategory(btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    venueType = btn.dataset.val;
+  }
+
+  function setRating(btn) {
+    document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    minRating = parseFloat(btn.dataset.val);
+  }
+
+  function setMainImg(thumbEl, url, cardIdx) {
+    const card = document.querySelector(`.card[data-idx="${cardIdx}"]`);
+    const img = card && card.querySelector('.card-media img');
+    if (img) img.src = url;
+  }
+
+  function toggleMenu(btn) {
+    const body = btn.nextElementSibling;
+    body.classList.toggle('open');
+    btn.textContent = body.classList.contains('open') ? t('menuOpen') : t('menu');
+  }
+
+  function renderPage(page) {
+    currentPage = page;
+    const totalPages = Math.ceil(allRestaurants.length / PAGE_SIZE);
+    const slice = allRestaurants.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+    const cardsHtml = slice.map((r, i) => {
+      const idx = (page - 1) * PAGE_SIZE + i;
+      const allImgs = [r.image, ...(r.gallery || [])].filter(Boolean);
+
+      const mediaHtml = r.video
+        ? `<video src="${r.video}" autoplay muted loop playsinline style="width:100%;height:210px;object-fit:cover;display:block;"></video>`
+        : allImgs.length
+          ? `<div class="card-media"><img src="${allImgs[0]}" alt="${r.name||''}" loading="lazy"/></div>`
+          : `<div class="card-media"><div class="card-media-placeholder">🍽</div></div>`;
+
+      const galleryHtml = !r.video && allImgs.length > 1
+        ? `<div class="gallery-strip">${allImgs.map(img => `<img src="${img}" loading="lazy" onclick="setMainImg(this,'${img}',${idx})"/>`).join('')}</div>`
+        : '';
+
+      const timesHtml = r.times && r.times.length
+        ? `<div class="times">${r.times.map(t2 => `<a class="time-chip" href="${r.booking_url}" target="_blank" rel="noopener">${t2}</a>`).join('')}</div>`
+        : `<div class="no-times">${t('noTimes')}</div>`;
+
+      const menus = r.menus || [];
+      const menuHtml = menus.length ? (() => {
+        const sections = menus.flatMap(m => m.sections || []);
+        const itemsHtml = sections.map(s =>
+          `<div class="menu-section-title">${s.header||''}</div>` +
+          (s.items||[]).map(item =>
+            `<div class="menu-item">
+              <div><span class="menu-item-name">${item.name}</span>${item.description?`<div class="menu-item-desc">${item.description}</div>`:''}</div>
+              ${item.price?`<span class="menu-item-price">&#8362;${item.price}</span>`:''}
+            </div>`
+          ).join('')
+        ).join('');
+        return `<button class="menu-toggle" onclick="toggleMenu(this)">${t('menu')}</button><div class="menu-body">${itemsHtml}</div>`;
+      })() : '';
+
+      return `
+        <div class="card" data-idx="${idx}">
+          ${mediaHtml}${galleryHtml}
+          <div class="card-body">
+            <div class="card-name">${r.name||'—'}</div>
+            <div class="card-meta">${[r.cuisine, r.address].filter(Boolean).join(' · ')}</div>
+            ${timesHtml}
+            <div class="btn-row">
+              <a class="book-btn" href="${r.booking_url}" target="_blank" rel="noopener">${t('bookTable')}</a>
+              ${r.website?`<a class="book-btn btn-outline" href="${r.website}" target="_blank" rel="noopener">${t('website')}</a>`:''}
+              ${r.instagram?`<a class="book-btn btn-insta" href="${r.instagram}" target="_blank" rel="noopener">Instagram</a>`:''}
+            </div>
+            ${menuHtml}
+          </div>
+        </div>`;
+    }).join('');
+
+    const dir = lang === 'he' ? 'rtl' : 'ltr';
+    const prevArrow = dir === 'rtl' ? '›' : '‹';
+    const nextArrow = dir === 'rtl' ? '‹' : '›';
+    const pageNums = Array.from({length: totalPages}, (_, i) => i+1)
+      .map(p => `<button class="page-btn${p===page?' active':''}" onclick="renderPage(${p})">${p}</button>`).join('');
+    const paginationHtml = totalPages > 1 ? `
+      <div class="pagination">
+        <button class="page-btn page-arrow" onclick="renderPage(${page-1})" ${page===1?'disabled':''}>${prevArrow}</button>
+        ${pageNums}
+        <button class="page-btn page-arrow" onclick="renderPage(${page+1})" ${page===totalPages?'disabled':''}>${nextArrow}</button>
+      </div>
+      <div class="page-info">${t('pageOf')(page, totalPages)}</div>` : '';
+
+    document.getElementById('resultsSection').innerHTML =
+      `<div class="results-header">${t('found')(allRestaurants.length)}</div>
+       <div class="cards-grid">${cardsHtml}</div>${paginationHtml}`;
+
+    window.scrollTo({ top: document.querySelector('.filters-section').offsetTop, behavior: 'smooth' });
+  }
+
+  async function doSearch() {
+    const btn = document.getElementById('searchBtn');
+    const resultsEl = document.getElementById('resultsSection');
+    const city = document.getElementById('city').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const size = document.getElementById('size').value;
+
+    if (!date || !time) { resultsEl.innerHTML = `<div class="status">${t('placeholder')}</div>`; return; }
+
+    btn.disabled = true;
+    btn.textContent = t('searching');
+    resultsEl.innerHTML = `<div class="status">${t('searching')}</div>`;
+
+    try {
+      const params = new URLSearchParams({ date, time, size, city, min_rating: minRating, venue_type: venueType });
+      const res = await fetch(`/api/search?${params}`);
+      const data = await res.json();
+      if (data.error) { resultsEl.innerHTML = `<div class="error-msg">${data.error}</div>`; return; }
+      allRestaurants = data.results || [];
+      if (!allRestaurants.length) { resultsEl.innerHTML = `<div class="status">${t('noResults')}</div>`; return; }
+      renderPage(1);
+    } catch (e) {
+      resultsEl.innerHTML = `<div class="error-msg">${e.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = t('searchBtn');
+    }
+  }
+</script>
+
+</body>
+</html>
