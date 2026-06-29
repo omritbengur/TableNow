@@ -385,7 +385,8 @@
   }
 
   function renderOverlap() {
-    if (!eventData || eventData.participants.length < 2) {
+    const hasParticipants = eventData && eventData.participants.some(p => p.times.length > 0);
+    if (!hasParticipants) {
       document.getElementById('overlapSection').style.display = 'none';
       return;
     }
@@ -399,24 +400,28 @@
       }
     }
     const total = eventData.participants.length;
-    const overlaps = HOURS.filter(h => timeCounts[h] && timeCounts[h] >= Math.max(2, Math.ceil(total * 0.5)))
-      .sort((a, b) => timeCounts[b] - timeCounts[a]);
+    const sorted = HOURS.filter(h => timeCounts[h])
+      .sort((a, b) => timeCounts[b] - timeCounts[a] || HOURS.indexOf(a) - HOURS.indexOf(b));
 
-    if (!overlaps.length) {
+    if (!sorted.length) {
       document.getElementById('overlapSection').style.display = 'none';
       return;
     }
     document.getElementById('overlapSection').style.display = 'block';
-    document.getElementById('overlapList').innerHTML = overlaps.map(h => `
+    document.getElementById('overlapList').innerHTML = sorted.map(h => {
+      const count = timeCounts[h];
+      const label = count === total ? 'מתאים לכולם' : `${count}/${total} משתתפים`;
+      return `
       <div class="overlap-slot">
         <div>
           <div class="overlap-time">${h}</div>
           <div class="overlap-names">${timeNames[h].join(', ')}</div>
         </div>
-        <div class="overlap-count">${timeCounts[h]}/${total}</div>
-      </div>`).join('');
+        <div class="overlap-count">${label}</div>
+      </div>`;
+    }).join('');
 
-    document.getElementById('searchBtn').dataset.bestTime = overlaps[0];
+    document.getElementById('searchBtn').dataset.bestTime = sorted[0];
   }
 
   function searchRestaurants() {
