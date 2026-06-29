@@ -50,6 +50,8 @@
       transition: all 0.15s;
     }
     .lang-btn:hover { background: #da3743; color: #fff; }
+    .about-btn { padding: 7px 16px; border-radius: 20px; border: none; background: transparent; color: #555; font-size: 13px; font-weight: 600; cursor: pointer; transition: color 0.15s; font-family: inherit; }
+    .about-btn:hover { color: #da3743; }
 
     /* LAYOUT */
     .layout {
@@ -277,8 +279,23 @@
 <div class="header">
   <div class="logo">מסעדה<span>עכשיו</span></div>
   <div class="header-right">
-<button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+    <button class="about-btn" onclick="toggleAbout()">הרעיון</button>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
   </div>
+</div>
+
+<div id="about-panel" style="display:none; background:#fff; border-bottom:1px solid #e8e8e8; padding:32px; max-width:680px; margin:0 auto;">
+  <div style="font-size:22px; font-weight:800; color:#1a1a1a; margin-bottom:16px; line-height:1.3;">יום חמישי, 20:00. אין הזמנה. אין תוכנית. יש רעב.</div>
+  <div style="font-size:15px; color:#555; line-height:1.75; margin-bottom:14px;">
+    כולנו מכירים את זה — מחפשים מסעדה ברגע האחרון, נכנסים לאתר אחד, אחר כך לשני, בודקים זמינות, מתאכזבים, מתחילים מחדש. עד שמוצאים משהו — כבר אכלנו עוגיות מהמזווה.
+  </div>
+  <div style="font-size:15px; color:#555; line-height:1.75; margin-bottom:14px;">
+    מסעדה עכשיו נבנתה כדי לפתור בדיוק את הרגע הזה. כמו שמצאת טיסה ברגע האחרון — גם שולחן פנוי יכול לחכות לך בקליק אחד.
+  </div>
+  <div style="font-size:15px; color:#555; line-height:1.75; margin-bottom:24px;">
+    אנחנו סורקים עשרות מסעדות בזמן אמת ומציגים לך רק את מה שפנוי — הערב, לכם, עכשיו.
+  </div>
+  <button onclick="toggleAbout(); document.getElementById('searchBtn').scrollIntoView({behavior:'smooth'})" style="background:#da3743; color:#fff; border:none; padding:12px 28px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;">בואו נמצא שולחן</button>
 </div>
 
 <div class="layout">
@@ -484,6 +501,11 @@
   };
 
   function t(key) { return T[lang][key] || key; }
+
+  function toggleAbout() {
+    const panel = document.getElementById('about-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
 
   function toggleLang() {
     lang = lang === 'he' ? 'en' : 'he';
