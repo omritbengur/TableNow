@@ -200,6 +200,40 @@
     .search-restaurants-btn:hover { background: #c22f3a; }
 
     .loading { text-align: center; color: #aaa; padding: 40px; }
+    /* RESULTS */
+    #resultsSection { margin-bottom: 20px; }
+    .result-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .result-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .result-meta { font-size: 13px; color: #888; margin-bottom: 10px; }
+    .result-times { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .result-time-chip {
+      padding: 5px 10px;
+      background: #fff5f5;
+      color: #da3743;
+      border: 1.5px solid #f5c0c3;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .result-book-btn {
+      display: inline-block;
+      padding: 9px 18px;
+      background: #da3743;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .searching-msg { text-align: center; color: #888; padding: 20px; font-size: 14px; }
+
     .copied-toast {
       position: fixed;
       bottom: 30px;
@@ -261,9 +295,15 @@
 
     <!-- חפיפה -->
     <div class="overlap-section" id="overlapSection" style="display:none">
-      <div class="section-title">שעות שמתאימות לכולם</div>
+      <div class="section-title">שעות שנבחרו</div>
       <div id="overlapList"></div>
       <button class="search-restaurants-btn" id="searchBtn" onclick="searchRestaurants()">חפש מסעדה לכולם</button>
+    </div>
+
+    <!-- תוצאות -->
+    <div id="resultsSection" style="display:none">
+      <div class="section-title" style="margin-bottom:14px">מסעדות זמינות</div>
+      <div id="resultsList"></div>
     </div>
 
   </div>
@@ -385,21 +425,23 @@
   }
 
   function renderOverlap() {
-    const hasParticipants = eventData && eventData.participants.some(p => p.times.length > 0);
-    if (!hasParticipants) {
+    if (!eventData) return;
+    const withTimes = eventData.participants.filter(p => p.times.length > 0);
+    const ready = withTimes.length >= eventData.size;
+    if (!ready) {
       document.getElementById('overlapSection').style.display = 'none';
       return;
     }
     const timeCounts = {};
     const timeNames = {};
-    for (const p of eventData.participants) {
+    for (const p of withTimes) {
       for (const t of p.times) {
         timeCounts[t] = (timeCounts[t] || 0) + 1;
         timeNames[t] = timeNames[t] || [];
         timeNames[t].push(p.name);
       }
     }
-    const total = eventData.participants.length;
+    const total = withTimes.length;
     const sorted = HOURS.filter(h => timeCounts[h])
       .sort((a, b) => timeCounts[b] - timeCounts[a] || HOURS.indexOf(a) - HOURS.indexOf(b));
 
@@ -421,19 +463,58 @@
       </div>`;
     }).join('');
 
-    document.getElementById('searchBtn').dataset.bestTime = sorted[0];
+    document.getElementById('searchBtn').dataset.times = sorted.join(',');
   }
 
-  function searchRestaurants() {
-    const bestTime = document.getElementById('searchBtn').dataset.bestTime;
-    if (!bestTime || !eventData) return;
-    const params = new URLSearchParams({
-      city: eventData.city,
-      date: eventData.date,
-      time: bestTime,
-      size: eventData.size
-    });
-    window.open(`/?${params}`, '_blank');
+  async function searchRestaurants() {
+    const btn = document.getElementById('searchBtn');
+    const times = (btn.dataset.times || '').split(',').filter(Boolean);
+    if (!times.length || !eventData) return;
+
+    btn.disabled = true;
+    btn.textContent = 'מחפש...';
+    const resultsSection = document.getElementById('resultsSection');
+    const resultsList = document.getElementById('resultsList');
+    resultsSection.style.display = 'block';
+    resultsList.innerHTML = '<div class="searching-msg">מחפש מסעדות פנויות בכל השעות...</div>';
+
+    try {
+      const searches = await Promise.all(times.map(time =>
+        fetch(`/api/search?${new URLSearchParams({ city: eventData.city, date: eventData.date, time, size: eventData.size })}`)
+          .then(r => r.json())
+          .catch(() => ({ results: [] }))
+      ));
+
+      // Merge: map by name, collect all available times
+      const byName = {};
+      for (let i = 0; i < times.length; i++) {
+        for (const r of (searches[i].results || [])) {
+          if (!r.name) continue;
+          if (!byName[r.name]) byName[r.name] = { ...r, availTimes: [] };
+          byName[r.name].availTimes.push(...(r.times || []).map(t => `${times[i]} (${t})`));
+        }
+      }
+
+      const merged = Object.values(byName);
+      if (!merged.length) {
+        resultsList.innerHTML = '<div class="searching-msg">לא נמצאו מסעדות פנויות בשעות אלו.</div>';
+        return;
+      }
+
+      resultsList.innerHTML = merged.map(r => `
+        <div class="result-card">
+          <div class="result-name">${r.name}</div>
+          <div class="result-meta">${[r.cuisine, r.address].filter(Boolean).join(' · ')}</div>
+          <div class="result-times">${r.availTimes.map(t => `<span class="result-time-chip">${t}</span>`).join('')}</div>
+          <a class="result-book-btn" href="${r.booking_url}" target="_blank">הזמן שולחן</a>
+        </div>`).join('');
+    } catch(e) {
+      resultsList.innerHTML = `<div class="searching-msg">שגיאה: ${e.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'חפש מסעדה לכולם';
+    }
+    resultsSection.scrollIntoView({ behavior: 'smooth' });
   }
 
   function shareLink() {
