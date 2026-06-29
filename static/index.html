@@ -755,26 +755,27 @@
   }
 
   async function submitNewEvent() {
-    const btn = document.getElementById('createEventBtn');
-    const city = document.getElementById('m-city').value;
-    const date = document.getElementById('m-date').value;
-    const size = document.getElementById('m-size').value;
-    if (!date) { alert('נא לבחור תאריך'); return; }
-    btn.disabled = true; btn.textContent = 'יוצר...';
     try {
+      const btn = document.getElementById('createEventBtn');
+      const cityEl = document.getElementById('m-city');
+      const dateEl = document.getElementById('m-date');
+      const sizeEl = document.getElementById('m-size');
+      const city = cityEl ? cityEl.value : 'תל אביב';
+      const date = dateEl ? dateEl.value : '';
+      const size = sizeEl ? parseInt(sizeEl.value) : 2;
+      if (!date) { alert('נא לבחור תאריך'); return; }
+      if (btn) { btn.disabled = true; btn.textContent = 'יוצר...'; }
       const res = await fetch('/api/events', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ city, date, size: parseInt(size) })
+        body: JSON.stringify({ city, date, size })
       });
       const data = await res.json();
       if (data.error) { alert('שגיאה: ' + data.error); return; }
       closeTogetherModal();
-      window.location.href = `/event/${data.id}`;
+      window.location.href = '/event/' + data.id;
     } catch(e) {
-      alert('שגיאת חיבור: ' + e.message);
-    } finally {
-      btn.disabled = false; btn.textContent = 'צור אירוע';
+      alert('שגיאה: ' + e.message);
     }
   }
 
