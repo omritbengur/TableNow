@@ -4,12 +4,46 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import requests
+import sqlite3
+import json
+import random
+import string
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 app = Flask(__name__, static_folder='static')
 CORS(app)
 
 ONTOPO_BASE = 'https://ontopo.com/api'
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'events.db')
+
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db():
+    with get_db() as conn:
+        conn.execute('''CREATE TABLE IF NOT EXISTS events (
+            id TEXT PRIMARY KEY,
+            city TEXT NOT NULL,
+            date TEXT NOT NULL,
+            size INTEGER NOT NULL,
+            created_at TEXT NOT NULL
+        )''')
+        conn.execute('''CREATE TABLE IF NOT EXISTS participants (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            times TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE(event_id, name)
+        )''')
+
+
+init_db()
 _token_cache = {}
 
 CITY_DATA = {
@@ -74,6 +108,70 @@ def to_ontopo_time(time_str):
 @app.route('/')
 def index():
     return send_from_directory('static', 'index.html')
+
+
+@app.route('/event/<event_id>')
+def event_page(event_id):
+    return send_from_directory('static', 'event.html')
+
+
+@app.route('/api/events', methods=['POST'])
+def create_event():
+    data = request.json or {}
+    city = data.get('city', 'תל אביב')
+    date = data.get('date')
+    size = data.get('size', 2)
+    if not date:
+        return jsonify({'error': 'date required'}), 400
+    event_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    with get_db() as conn:
+        conn.execute(
+            'INSERT INTO events (id, city, date, size, created_at) VALUES (?,?,?,?,?)',
+            (event_id, city, date, size, datetime.utcnow().isoformat())
+        )
+    return jsonify({'id': event_id})
+
+
+@app.route('/api/events/<event_id>')
+def get_event(event_id):
+    with get_db() as conn:
+        event = conn.execute('SELECT * FROM events WHERE id=?', (event_id,)).fetchone()
+        if not event:
+            return jsonify({'error': 'not found'}), 404
+        participants = conn.execute(
+            'SELECT name, times, updated_at FROM participants WHERE event_id=? ORDER BY updated_at',
+            (event_id,)
+        ).fetchall()
+    return jsonify({
+        'id': event['id'],
+        'city': event['city'],
+        'date': event['date'],
+        'size': event['size'],
+        'participants': [
+            {'name': p['name'], 'times': json.loads(p['times'])}
+            for p in participants
+        ]
+    })
+
+
+@app.route('/api/events/<event_id>/join', methods=['POST'])
+def join_event(event_id):
+    data = request.json or {}
+    name = (data.get('name') or '').strip()
+    times = data.get('times', [])
+    if not name:
+        return jsonify({'error': 'name required'}), 400
+    with get_db() as conn:
+        event = conn.execute('SELECT id FROM events WHERE id=?', (event_id,)).fetchone()
+        if not event:
+            return jsonify({'error': 'not found'}), 404
+        conn.execute(
+            '''INSERT INTO participants (event_id, name, times, updated_at)
+               VALUES (?,?,?,?)
+               ON CONFLICT(event_id, name) DO UPDATE SET times=excluded.times, updated_at=excluded.updated_at''',
+            (event_id, name, json.dumps(times), datetime.utcnow().isoformat())
+        )
+    return jsonify({'ok': True})
 
 
 @app.route('/api/search')

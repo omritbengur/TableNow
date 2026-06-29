@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>יוצאים ביחד · מסעדה עכשיו</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Rubik', sans-serif; background: #f7f7f7; color: #2d2d2d; min-height: 100vh; }
+
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 0 20px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    }
+    .logo { font-size: 20px; font-weight: 800; color: #da3743; text-decoration: none; }
+    .logo span { color: #2d2d2d; }
+    .share-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1.5px solid #da3743;
+      background: #fff;
+      color: #da3743;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .share-btn:hover { background: #da3743; color: #fff; }
+
+    .page { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
+
+    .event-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .event-meta {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    /* NAME INPUT */
+    .name-section {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .name-section label { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.6px; display: block; margin-bottom: 8px; }
+    .name-input-row { display: flex; gap: 10px; }
+    .name-input {
+      flex: 1;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .name-input:focus { border-color: #da3743; }
+    .save-name-btn {
+      padding: 11px 20px;
+      background: #da3743;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .save-name-btn:hover { background: #c22f3a; }
+
+    /* TIME GRID */
+    .times-section {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .section-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    .time-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .time-slot {
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 1.5px solid #e0e0e0;
+      background: #fafafa;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+      font-family: inherit;
+      color: #444;
+      position: relative;
+    }
+    .time-slot.selected { background: #da3743; color: #fff; border-color: #da3743; }
+    .time-slot:disabled { opacity: 0.5; cursor: default; }
+    .save-times-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 13px;
+      background: #da3743;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .save-times-btn:hover { background: #c22f3a; }
+    .save-times-btn:disabled { background: #e8a0a4; cursor: default; }
+
+    /* PARTICIPANTS */
+    .participants-section {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .participant-row {
+      margin-bottom: 14px;
+    }
+    .participant-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .participant-name { font-size: 14px; font-weight: 600; }
+    .participant-times { display: flex; flex-wrap: wrap; gap: 6px; }
+    .p-time-chip {
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .no-participants { font-size: 14px; color: #aaa; text-align: center; padding: 20px 0; }
+
+    /* OVERLAP */
+    .overlap-section {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .overlap-slot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .overlap-slot:last-child { border-bottom: none; }
+    .overlap-time { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+    .overlap-names { font-size: 13px; color: #666; }
+    .overlap-count { font-size: 13px; font-weight: 700; color: #da3743; }
+    .search-restaurants-btn {
+      width: 100%;
+      padding: 14px;
+      background: #da3743;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 16px;
+    }
+    .search-restaurants-btn:hover { background: #c22f3a; }
+
+    .loading { text-align: center; color: #aaa; padding: 40px; }
+    .copied-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 999;
+    }
+    .copied-toast.show { opacity: 1; }
+
+    @media (max-width: 480px) {
+      .time-slot { padding: 8px 10px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a href="/" class="logo">מסעדה <span>עכשיו</span></a>
+  <button class="share-btn" onclick="shareLink()">שתף קישור</button>
+</div>
+
+<div class="page">
+  <div id="loading" class="loading">טוען...</div>
+  <div id="content" style="display:none">
+
+    <div class="event-title" id="eventTitle"></div>
+    <div class="event-meta" id="eventMeta"></div>
+
+    <!-- שם משתתף -->
+    <div class="name-section">
+      <label>השם שלך</label>
+      <div class="name-input-row">
+        <input class="name-input" id="nameInput" type="text" placeholder="הכנס את שמך" maxlength="30" />
+        <button class="save-name-btn" onclick="saveName()">אישור</button>
+      </div>
+    </div>
+
+    <!-- בחירת שעות -->
+    <div class="times-section" id="timesSection" style="display:none">
+      <div class="section-title">מתי אתה פנוי?</div>
+      <div class="time-grid" id="timeGrid"></div>
+      <button class="save-times-btn" id="saveTimesBtn" onclick="saveTimes()">שמור זמינות</button>
+    </div>
+
+    <!-- משתתפים -->
+    <div class="participants-section">
+      <div class="section-title">מי מגיע</div>
+      <div id="participantsList"><div class="no-participants">אין עדיין משתתפים</div></div>
+    </div>
+
+    <!-- חפיפה -->
+    <div class="overlap-section" id="overlapSection" style="display:none">
+      <div class="section-title">שעות שמתאימות לכולם</div>
+      <div id="overlapList"></div>
+      <button class="search-restaurants-btn" id="searchBtn" onclick="searchRestaurants()">חפש מסעדה לכולם</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="copied-toast" id="toast">הקישור הועתק!</div>
+
+<script>
+  const COLORS = ['#da3743','#2196F3','#4CAF50','#FF9800','#9C27B0','#00BCD4','#E91E63','#607D8B'];
+  const HOURS = ['11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30',
+                 '18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'];
+
+  const eventId = location.pathname.split('/').pop();
+  let myName = localStorage.getItem('myName_' + eventId) || '';
+  let myTimes = JSON.parse(localStorage.getItem('myTimes_' + eventId) || '[]');
+  let eventData = null;
+  let pollTimer = null;
+
+  const DAYS_HE = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  const MONTHS_HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr + 'T12:00:00');
+    return `${DAYS_HE[d.getDay()]}, ${d.getDate()} ב${MONTHS_HE[d.getMonth()]}`;
+  }
+
+  function colorFor(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % COLORS.length;
+    return COLORS[h];
+  }
+
+  async function loadEvent() {
+    const res = await fetch(`/api/events/${eventId}`);
+    if (!res.ok) { document.getElementById('loading').textContent = 'האירוע לא נמצא'; return; }
+    eventData = await res.json();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+    document.getElementById('eventTitle').textContent = `יוצאים ביחד ל${eventData.city}`;
+    document.getElementById('eventMeta').textContent = `${formatDate(eventData.date)} · ${eventData.size} סועדים`;
+
+    buildTimeGrid();
+    if (myName) {
+      document.getElementById('nameInput').value = myName;
+      showTimesSection();
+    }
+    renderParticipants();
+    renderOverlap();
+  }
+
+  function buildTimeGrid() {
+    const grid = document.getElementById('timeGrid');
+    grid.innerHTML = HOURS.map(h =>
+      `<button class="time-slot${myTimes.includes(h) ? ' selected' : ''}" onclick="toggleTime(this,'${h}')">${h}</button>`
+    ).join('');
+  }
+
+  function toggleTime(btn, hour) {
+    if (!myName) { document.getElementById('nameInput').focus(); return; }
+    btn.classList.toggle('selected');
+    if (btn.classList.contains('selected')) {
+      if (!myTimes.includes(hour)) myTimes.push(hour);
+    } else {
+      myTimes = myTimes.filter(t => t !== hour);
+    }
+  }
+
+  function showTimesSection() {
+    document.getElementById('timesSection').style.display = 'block';
+  }
+
+  function saveName() {
+    const val = document.getElementById('nameInput').value.trim();
+    if (!val) return;
+    myName = val;
+    localStorage.setItem('myName_' + eventId, myName);
+    showTimesSection();
+  }
+
+  async function saveTimes() {
+    if (!myName) return;
+    const btn = document.getElementById('saveTimesBtn');
+    btn.disabled = true;
+    btn.textContent = 'שומר...';
+    localStorage.setItem('myTimes_' + eventId, JSON.stringify(myTimes));
+    await fetch(`/api/events/${eventId}/join`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ name: myName, times: myTimes })
+    });
+    btn.disabled = false;
+    btn.textContent = 'שמור זמינות';
+    await loadEvent();
+  }
+
+  function renderParticipants() {
+    if (!eventData) return;
+    const list = document.getElementById('participantsList');
+    if (!eventData.participants.length) {
+      list.innerHTML = '<div class="no-participants">אין עדיין משתתפים — שתף את הקישור!</div>';
+      return;
+    }
+    list.innerHTML = eventData.participants.map(p => {
+      const color = colorFor(p.name);
+      const initial = p.name.charAt(0);
+      const timesHtml = p.times.length
+        ? p.times.map(t => `<span class="p-time-chip" style="background:${color}22;color:${color}">${t}</span>`).join('')
+        : '<span style="font-size:13px;color:#bbb">לא סימן שעות עדיין</span>';
+      const isMe = p.name === myName ? ' (אני)' : '';
+      return `
+        <div class="participant-row">
+          <div class="participant-header">
+            <div class="avatar" style="background:${color}">${initial}</div>
+            <div class="participant-name">${p.name}${isMe}</div>
+          </div>
+          <div class="participant-times">${timesHtml}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderOverlap() {
+    if (!eventData || eventData.participants.length < 2) {
+      document.getElementById('overlapSection').style.display = 'none';
+      return;
+    }
+    const timeCounts = {};
+    const timeNames = {};
+    for (const p of eventData.participants) {
+      for (const t of p.times) {
+        timeCounts[t] = (timeCounts[t] || 0) + 1;
+        timeNames[t] = timeNames[t] || [];
+        timeNames[t].push(p.name);
+      }
+    }
+    const total = eventData.participants.length;
+    const overlaps = HOURS.filter(h => timeCounts[h] && timeCounts[h] >= Math.max(2, Math.ceil(total * 0.5)))
+      .sort((a, b) => timeCounts[b] - timeCounts[a]);
+
+    if (!overlaps.length) {
+      document.getElementById('overlapSection').style.display = 'none';
+      return;
+    }
+    document.getElementById('overlapSection').style.display = 'block';
+    document.getElementById('overlapList').innerHTML = overlaps.map(h => `
+      <div class="overlap-slot">
+        <div>
+          <div class="overlap-time">${h}</div>
+          <div class="overlap-names">${timeNames[h].join(', ')}</div>
+        </div>
+        <div class="overlap-count">${timeCounts[h]}/${total}</div>
+      </div>`).join('');
+
+    document.getElementById('searchBtn').dataset.bestTime = overlaps[0];
+  }
+
+  function searchRestaurants() {
+    const bestTime = document.getElementById('searchBtn').dataset.bestTime;
+    if (!bestTime || !eventData) return;
+    const params = new URLSearchParams({
+      city: eventData.city,
+      date: eventData.date,
+      time: bestTime,
+      size: eventData.size
+    });
+    window.open(`/?${params}`, '_blank');
+  }
+
+  function shareLink() {
+    navigator.clipboard.writeText(location.href).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+  }
+
+  loadEvent();
+  pollTimer = setInterval(loadEvent, 5000);
+</script>
+</body>
+</html>
