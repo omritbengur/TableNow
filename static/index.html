@@ -294,16 +294,35 @@
       <label data-i18n="city">עיר</label>
       <div class="field-box">
         <select id="city">
+          <optgroup label="מרכז">
           <option value="תל אביב" data-i18n-opt="tlv">תל אביב</option>
           <option value="ירושלים" data-i18n-opt="jer">ירושלים</option>
-          <option value="חיפה" data-i18n-opt="hfa">חיפה</option>
-          <option value="הרצליה" data-i18n-opt="hrl">הרצליה</option>
           <option value="רמת גן" data-i18n-opt="rag">רמת גן</option>
-          <option value="פתח תקווה" data-i18n-opt="ptk">פתח תקווה</option>
+          <option value="גבעתיים" data-i18n-opt="gvt">גבעתיים</option>
+          <option value="חולון" data-i18n-opt="hln">חולון</option>
           <option value="ראשון לציון" data-i18n-opt="r1z">ראשון לציון</option>
-          <option value="נתניה" data-i18n-opt="ntn">נתניה</option>
+          <option value="רחובות" data-i18n-opt="rhv">רחובות</option>
+          <option value="מודיעין" data-i18n-opt="mdn">מודיעין</option>
+          <option value="אשדוד" data-i18n-opt="asd">אשדוד</option>
           <option value="באר שבע" data-i18n-opt="bsh">באר שבע</option>
           <option value="אילת" data-i18n-opt="elt">אילת</option>
+          </optgroup>
+          <optgroup label="שרון">
+          <option value="הרצליה" data-i18n-opt="hrl">הרצליה</option>
+          <option value="רעננה" data-i18n-opt="ran">רעננה</option>
+          <option value="כפר סבא" data-i18n-opt="kfs">כפר סבא</option>
+          <option value="הוד השרון" data-i18n-opt="hds">הוד השרון</option>
+          <option value="רמת השרון" data-i18n-opt="rhs">רמת השרון</option>
+          <option value="נתניה" data-i18n-opt="ntn">נתניה</option>
+          <option value="פתח תקווה" data-i18n-opt="ptk">פתח תקווה</option>
+          </optgroup>
+          <optgroup label="צפון">
+          <option value="חיפה" data-i18n-opt="hfa">חיפה</option>
+          <option value="נהריה" data-i18n-opt="nhr">נהריה</option>
+          <option value="עכו" data-i18n-opt="akk">עכו</option>
+          <option value="טבריה" data-i18n-opt="tbr">טבריה</option>
+          <option value="נצרת" data-i18n-opt="nzt">נצרת</option>
+          </optgroup>
         </select>
       </div>
     </div>
@@ -365,6 +384,39 @@
       </div>
     </div>
 
+    <hr class="divider" />
+
+    <div>
+      <div class="filter-label" data-i18n="cuisineType">סוג מטבח</div>
+      <div class="chips-wrap">
+        <div class="chip cuisine-btn active" data-val="" onclick="setCuisine(this)" data-i18n="all">הכל</div>
+        <div class="chip cuisine-btn" data-val="יפני" onclick="setCuisine(this)">יפני</div>
+        <div class="chip cuisine-btn" data-val="תאילנדי" onclick="setCuisine(this)">תאילנדי</div>
+        <div class="chip cuisine-btn" data-val="איטלקי" onclick="setCuisine(this)">איטלקי</div>
+        <div class="chip cuisine-btn" data-val="ים תיכוני" onclick="setCuisine(this)">ים תיכוני</div>
+        <div class="chip cuisine-btn" data-val="צרפתי" onclick="setCuisine(this)">צרפתי</div>
+        <div class="chip cuisine-btn" data-val="מקסיקני" onclick="setCuisine(this)">מקסיקני</div>
+        <div class="chip cuisine-btn" data-val="אסייתי" onclick="setCuisine(this)">אסייתי</div>
+        <div class="chip cuisine-btn" data-val="בשרי" onclick="setCuisine(this)">בשרי</div>
+        <div class="chip cuisine-btn" data-val="פיצה" onclick="setCuisine(this)">פיצה</div>
+        <div class="chip cuisine-btn" data-val="המבורגר" onclick="setCuisine(this)">המבורגר</div>
+        <div class="chip cuisine-btn" data-val="פירות ים" onclick="setCuisine(this)">פירות ים</div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div>
+      <div class="filter-label" data-i18n="dietary">תזונה ואלרגנים</div>
+      <div class="chips-wrap">
+        <div class="chip dietary-btn active" data-val="" onclick="setDietary(this)" data-i18n="all">הכל</div>
+        <div class="chip dietary-btn" data-val="צמחוני" onclick="setDietary(this)">צמחוני</div>
+        <div class="chip dietary-btn" data-val="טבעוני" onclick="setDietary(this)">טבעוני</div>
+        <div class="chip dietary-btn" data-val="ללא גלוטן" onclick="setDietary(this)">ללא גלוטן</div>
+        <div class="chip dietary-btn" data-val="ללא חלב" onclick="setDietary(this)">ללא חלב</div>
+      </div>
+    </div>
+
     <button class="search-btn" id="searchBtn" onclick="doSearch()" data-i18n="searchBtn">חפשי שולחן</button>
   </div>
 
@@ -381,6 +433,8 @@
   const PAGE_SIZE = 6;
   let minRating = 0;
   let venueType = '';
+  let cuisineFilter = '';
+  let dietaryFilter = '';
   let allRestaurants = [];
   let currentPage = 1;
   let lang = 'he';
@@ -479,6 +533,29 @@
     minRating = parseFloat(btn.dataset.val);
   }
 
+  function setCuisine(btn) {
+    document.querySelectorAll('.cuisine-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cuisineFilter = btn.dataset.val;
+    if (allRestaurants.length) renderPage(1);
+  }
+
+  function setDietary(btn) {
+    document.querySelectorAll('.dietary-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    dietaryFilter = btn.dataset.val;
+    if (allRestaurants.length) renderPage(1);
+  }
+
+  function applyLocalFilters(list) {
+    return list.filter(r => {
+      const text = (r.cuisine || '').toLowerCase();
+      if (cuisineFilter && !text.includes(cuisineFilter)) return false;
+      if (dietaryFilter && !text.includes(dietaryFilter)) return false;
+      return true;
+    });
+  }
+
   function setMainImg(thumbEl, url, cardIdx) {
     const card = document.querySelector(`.card[data-idx="${cardIdx}"]`);
     const img = card && card.querySelector('.card-media img');
@@ -493,8 +570,13 @@
 
   function renderPage(page) {
     currentPage = page;
-    const totalPages = Math.ceil(allRestaurants.length / PAGE_SIZE);
-    const slice = allRestaurants.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    const filtered = applyLocalFilters(allRestaurants);
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    const slice = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    if (!slice.length) {
+      document.getElementById('resultsSection').innerHTML = `<div class="status">${t('noResults')}</div>`;
+      return;
+    }
 
     const cardsHtml = slice.map((r, i) => {
       const idx = (page - 1) * PAGE_SIZE + i;
@@ -560,7 +642,7 @@
       <div class="page-info">${t('pageOf')(page, totalPages)}</div>` : '';
 
     document.getElementById('resultsSection').innerHTML =
-      `<div class="results-header">${t('found')(allRestaurants.length)}</div>
+      `<div class="results-header">${t('found')(filtered.length)}</div>
        <div class="cards-grid">${cardsHtml}</div>${paginationHtml}`;
   }
 
